@@ -1,0 +1,13 @@
+FROM mysql:5.7
+RUN { \
+    echo '[mysql]'; \
+    echo 'default-character-set=utf8mb4'; \
+    echo '[mysqld]'; \
+    echo 'character-set-server=utf8mb4'; \
+    echo 'collation-server=utf8mb4_general_ci'; \
+    echo 'init-connect = SET NAMES utf8mb4'; \
+    echo 'innodb-file-format=barracuda'; \
+    echo 'innodb_file_format_max=barracuda'; \
+    echo '[client]'; \
+    echo 'default-character-set=utf8mb4'; \
+} > /etc/mysql/conf.d/charset.cnf

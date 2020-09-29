@@ -1,0 +1,39 @@
+version: '3.4'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      TZ: Asia/Tokyo
+    build:
+      context : .
+      dockerfile: Dockerfile-MySQL
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    container_name: 'careyou_db'
+    volumes:
+      - ./db/mysql/volumes:/var/lib/mysql:cached
+    ports:
+      - "3344:3306"
+    env_file: .env
+    user: mysql
+  web:
+    container_name: 'careyou_web'
+    environment:
+      TZ: Asia/Tokyo
+    build:
+      context : .
+      dockerfile: Dockerfile
+    command: bash -c "rm -rf /careyou/tmp/pids/server.pid && bundle exec rake db:create && bundle exec rails s -p 3014 -b '0.0.0.0'"
+    volumes:
+      - .:/careyou:cached
+    ports:
+      - "3014:3014"
+    env_file: .env
+    privileged: true
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+
+volumes:
+  redis-data:
+    driver: local
